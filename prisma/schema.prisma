@@ -1,14 +1,61 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider          = "mysql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model People {
+  id            String   @id @default(uuid())
+  name          String
+  lastName      String
+  dob           DateTime
+  email         String   @unique
+  phone         String
+  gender        String
+  maritalStatus String
+  document      String   @unique
+  address       String
+  number        Int
+  complement    String
+  neighborhood  String
+  city          String
+  state         String
+  cep           String
+  photo         String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime
+  Login         Login?
+
+  @@index([name, lastName, document, email])
+  @@map("peoples")
+}
+
+model Login {
+  id             String   @id @default(uuid())
+  password       String
+  emailValidated Boolean
+  role           Role     @relation(fields: [roleId], references: [id])
+  roleId         String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  deletedAt      DateTime @map("deleted_at")
+  People         People   @relation(fields: [peopleId], references: [id])
+  peopleId       String   @unique @map("people_id")
+
+  @@map("logins")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  description String
+  is_active   Boolean
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  deletedAt   DateTime @map("deleted_at")
+  logins      Login[]
 }
