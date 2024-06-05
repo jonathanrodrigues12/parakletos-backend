@@ -4,8 +4,12 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(8080);
-
+  app.enableCors({
+    allowedHeaders: '*',
+    origin: '*',
+    methods: '*',
+    credentials: true,
+  });
   const config = new DocumentBuilder()
     .setTitle('Parakletos API')
     .setDescription('API of intregration')
@@ -14,6 +18,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/docs', app, document);
+  SwaggerModule.setup('docs', app, document);
+  await app.listen(8083);
 }
 bootstrap();
