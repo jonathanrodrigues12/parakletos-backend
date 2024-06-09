@@ -9,26 +9,26 @@ datasource db {
 }
 
 model People {
-  id            String   @id @default(uuid())
+  id            String    @id @default(uuid())
   name          String
-  lastName      String   @map("last_name")
+  lastName      String    @map("last_name")
   dob           DateTime
-  email         String   @unique
+  email         String    @unique
   phone         String
-  gender        String
-  maritalStatus String   @map("marital_status")
-  document      String   @unique
-  address       String
-  number        Int
-  complement    String
-  neighborhood  String
-  city          String
-  state         String
-  cep           String
-  photo         String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt @map("updated_at")
-  deletedAt     DateTime @map("deleted_at")
+  gender        String?
+  maritalStatus String?   @map("marital_status")
+  document      String    @unique
+  address       String?
+  number        Int?
+  complement    String?
+  neighborhood  String?
+  city          String?
+  state         String?
+  cep           String?
+  photo         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
   Login         Login?
 
   @@index([name, lastName, document, email])
@@ -36,16 +36,16 @@ model People {
 }
 
 model Login {
-  id             String   @id @default(uuid())
+  id             String    @id @default(uuid())
   password       String
   emailValidated Boolean
-  role           Role     @relation(fields: [roleId], references: [id])
+  role           Role      @relation(fields: [roleId], references: [id])
   roleId         String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt @map("updated_at")
-  deletedAt      DateTime @map("deleted_at")
-  People         People   @relation(fields: [peopleId], references: [id])
-  peopleId       String   @unique @map("people_id")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime? @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+  People         People    @relation(fields: [peopleId], references: [id])
+  peopleId       String    @unique @map("people_id")
 
   @@map("logins")
 }
@@ -55,21 +55,25 @@ model Role {
   description String
   isActive    Boolean     @map("is_active")
   createdAt   DateTime    @default(now()) @map("created_at")
-  updatedAt   DateTime    @updatedAt @map("updated_at")
-  deletedAt   DateTime    @map("deleted_at")
+  updatedAt   DateTime?   @updatedAt @map("updated_at")
+  deletedAt   DateTime?   @map("deleted_at")
   logins      Login[]
   Permission  Permission?
+
+  @@map("roles")
 }
 
 model Permission {
-  id        String   @id @default(uuid())
-  role      Role     @relation(fields: [roleId], references: [id])
-  roleId    String   @unique @map("people_id")
+  id        String    @id @default(uuid())
+  role      Role      @relation(fields: [roleId], references: [id])
+  roleId    String    @unique @map("people_id")
   create    Boolean
   read      Boolean
   update    Boolean
   deleted   Boolean
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  deletedAt DateTime @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("permission")
 }
